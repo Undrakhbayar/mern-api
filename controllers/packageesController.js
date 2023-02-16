@@ -32,24 +32,56 @@ const getAllPackagees = async (req, res) => {
 const createNewPackagee = async (req, res) => {
   const {
     user,
+    prgsStatusCd,
     houseSeq,
     mailId,
+    mailBagNumber,
     blNo,
+    reportType,
+    riskType,
     netWgt,
     wgt,
+    //wgtUnit,
     qty,
+    qtyUnit,
+    dangGoodsCode,
     transFare,
+    transFareCurr,
     price1,
+    priceCurr1,
+    price2,
+    priceCurr2,
+    price3,
+    priceCurr3,
+    price4,
+    priceCurr4,
+    price5,
+    priceCurr5,
+    transportType,
+    isDiplomat,
+    hsCode,
     goodsNm,
+    shipperCntryCd,
+    shipperCntryNm,
+    shipperNatinality,
     shipperNm,
+    shipperReg,
+    shipperAddr,
+    shipperTel,
+    consigneeCntryCd,
     consigneeCntryNm,
+    consigneeNatinality,
     consigneeNm,
     consigneeReg,
+    consigneeAddr,
     consigneeTel,
     compName,
     compRegister,
     compAddr,
     compTel,
+    mailDate,
+    ecommerceType,
+    ecommerceLink
   } = req.body;
   console.log(req.body);
 
@@ -60,36 +92,71 @@ const createNewPackagee = async (req, res) => {
 
   // Check for duplicate title
   const duplicate = await Packagee.findOne({
-    $and: [{ mailId, blNo }]
+    $and: [{ mailId, blNo }],
   })
+    .collation({ locale: "en", strength: 2 })
     .lean()
     .exec();
 
   if (duplicate) {
-    return res.status(409).json({ message: "№ болон илгээмжийн дугаар давхцсан байна!" });
+    return res
+      .status(409)
+      .json({ message: "№ болон илгээмжийн дугаар давхцсан байна!" });
   }
 
   // Create and store the new user
   const packagee = await Packagee.create({
     user,
+    prgsStatusCd,
     houseSeq,
     mailId,
+    mailBagNumber,
     blNo,
+    reportType,
+    riskType,
     netWgt,
     wgt,
+    //wgtUnit,
     qty,
+    qtyUnit,
+    dangGoodsCode,
     transFare,
+    transFareCurr,
     price1,
+    priceCurr1,
+    price2,
+    priceCurr2,
+    price3,
+    priceCurr3,
+    price4,
+    priceCurr4,
+    price5,
+    priceCurr5,
+    transportType,
+    isDiplomat,
+    hsCode,
     goodsNm,
+    shipperCntryCd,
+    shipperCntryNm,
+    shipperNatinality,
     shipperNm,
+    shipperReg,
+    shipperAddr,
+    shipperTel,
+    consigneeCntryCd,
     consigneeCntryNm,
+    consigneeNatinality,
     consigneeNm,
     consigneeReg,
+    consigneeAddr,
     consigneeTel,
     compName,
     compRegister,
     compAddr,
     compTel,
+    mailDate,
+    ecommerceType,
+    ecommerceLink
   });
 
   if (packagee) {
@@ -104,12 +171,13 @@ const createNewPackagee = async (req, res) => {
 // @route PATCH /packagees
 // @access Private
 const updatePackagee = async (req, res) => {
-  const { id, user, title, text, completed } = req.body;
+  console.log(req.body);
+  const { id, mailId, blNo, prgsStatusCd } = req.body;
 
   // Confirm data
-  if (!id || !user || !title || !text || typeof completed !== "boolean") {
+/*   if (!id || !prgsStatusCd !== "boolean") {
     return res.status(400).json({ message: "All fields are required" });
-  }
+  } */
 
   // Confirm packagee exists to update
   const packagee = await Packagee.findById(id).exec();
@@ -119,7 +187,9 @@ const updatePackagee = async (req, res) => {
   }
 
   // Check for duplicate title
-  const duplicate = await Packagee.findOne({ title })
+  /*   const duplicate = await Packagee.findOne({
+    $and: [{ mailId, blNo }],
+  })
     .collation({ locale: "en", strength: 2 })
     .lean()
     .exec();
@@ -127,12 +197,10 @@ const updatePackagee = async (req, res) => {
   // Allow renaming of the original packagee
   if (duplicate && duplicate?._id.toString() !== id) {
     return res.status(409).json({ message: "Duplicate packagee title" });
+  } */
+  if (prgsStatusCd) {
+    packagee.prgsStatusCd = prgsStatusCd;
   }
-
-  packagee.user = user;
-  packagee.title = title;
-  packagee.text = text;
-  packagee.completed = completed;
 
   const updatedPackagee = await packagee.save();
 

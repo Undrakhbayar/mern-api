@@ -5,15 +5,16 @@ const packageeSchema = new mongoose.Schema(
     {
         houseSeq: {
             type: String,
-            required: true
+            required: false
         },
         prgsStatusCd: {
             type: String,
+            default: "10",
             required: false
         },
         mailId: {
             type: String,
-            required: true
+            required: false
         },
         mailBagNumber: {
             type: String,
@@ -21,7 +22,7 @@ const packageeSchema = new mongoose.Schema(
         },
         blNo: {
             type: String,
-            required: true
+            required: false
         },
         reportType: {
             type: String,
@@ -33,11 +34,11 @@ const packageeSchema = new mongoose.Schema(
         },
         netWgt: {
             type: Number,
-            required: true
+            required: false
         },
         wgt: {
             type: Number,
-            required: true
+            required: false
         },
         wgtUnit: {
             type: String,
@@ -45,7 +46,7 @@ const packageeSchema = new mongoose.Schema(
         },
         qty: {
             type: Number,
-            required: true
+            required: false
         },
         qtyUnit: {
             type: String,
@@ -57,7 +58,7 @@ const packageeSchema = new mongoose.Schema(
         },
         transFare: {
             type: Number,
-            required: true
+            required: false
         },
         transFareCurr: {
             type: String,
@@ -65,7 +66,7 @@ const packageeSchema = new mongoose.Schema(
         },
         price1: {
             type: Number,
-            required: true
+            required: false
         },
         priceCurr1: {
             type: String,
@@ -118,7 +119,7 @@ const packageeSchema = new mongoose.Schema(
         },
         goodsNm: {
             type: String,
-            required: true
+            required: false
         },
         shipperCntryCd: {
             type: String,
@@ -134,7 +135,7 @@ const packageeSchema = new mongoose.Schema(
         },
         shipperNm: {
             type: String,
-            required: true
+            required: false
         },
         shipperReg: {
             type: String,
@@ -154,7 +155,7 @@ const packageeSchema = new mongoose.Schema(
         },
         consigneeCntryNm: {
             type: String,
-            required: true
+            required: false
         },
         consigneeNatinality: {
             type: String,
@@ -162,11 +163,11 @@ const packageeSchema = new mongoose.Schema(
         },
         consigneeNm: {
             type: String,
-            required: true
+            required: false
         },
         consigneeReg: {
             type: String,
-            required: true
+            required: false
         },
         consigneeAddr: {
             type: String,
@@ -174,23 +175,23 @@ const packageeSchema = new mongoose.Schema(
         },
         consigneeTel: {
             type: String,
-            required: true
+            required: false
         },
         compName: {
             type: String,
-            required: true
+            required: false
         },
         compRegister: {
             type: String,
-            required: true
+            required: false
         },
         compAddr: {
             type: String,
-            required: true
+            required: false
         },
         compTel: {
             type: String,
-            required: true
+            required: false
         },
         regDate: {
             type: Date,
@@ -209,12 +210,13 @@ const packageeSchema = new mongoose.Schema(
             required: false
         },
         user: {
-            type: String,
-            required: true
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'User'
         },
     },
     {
-        timestamps: true
+        timestamps: false
     }
 )
 
