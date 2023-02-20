@@ -68,7 +68,7 @@ const packageeSchema = new mongoose.Schema(
             type: Number,
             required: false
         },
-        priceCurr1: {
+        price1Curr: {
             type: String,
             default: "USD"
         },
@@ -76,7 +76,7 @@ const packageeSchema = new mongoose.Schema(
             type: Number,
             required: false
         },
-        priceCurr2: {
+        price2Curr: {
             type: String,
             required: false
         },
@@ -84,7 +84,7 @@ const packageeSchema = new mongoose.Schema(
             type: Number,
             required: false
         },
-        priceCurr3: {
+        price3Curr: {
             type: String,
             required: false
         },
@@ -92,7 +92,7 @@ const packageeSchema = new mongoose.Schema(
             type: Number,
             required: false
         },
-        priceCurr4: {
+        price4Curr: {
             type: String,
             required: false
         },
@@ -100,7 +100,7 @@ const packageeSchema = new mongoose.Schema(
             type: Number,
             required: false
         },
-        priceCurr5: {
+        price5Curr: {
             type: String,
             required: false
         },
@@ -198,7 +198,7 @@ const packageeSchema = new mongoose.Schema(
             required: false
         },
         mailDate: {
-            type: Date,
+            type: String,
             required: false
         },
         ecommerceType: {
