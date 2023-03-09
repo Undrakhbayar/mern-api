@@ -6,7 +6,7 @@ const User = require("../models/User");
 // @access Private
 const getAllPackagees = async (req, res) => {
   // Get all packagees from MongoDB
-  const packagees = await Packagee.find().lean();
+  const packagees = await Packagee.find({ delYn: "N" }).sort({ createdAt: -1 }).lean();
 
   // If no packagees
   if (!packagees?.length) {
@@ -30,135 +30,52 @@ const getAllPackagees = async (req, res) => {
 // @route POST /packagees
 // @access Private
 const createNewPackagee = async (req, res) => {
-  const {
-    user,
-    prgsStatusCd,
-    houseSeq,
-    mailId,
-    mailBagNumber,
-    blNo,
-    reportType,
-    riskType,
-    netWgt,
-    wgt,
-    //wgtUnit,
-    qty,
-    qtyUnit,
-    dangGoodsCode,
-    transFare,
-    transFareCurr,
-    price1,
-    price1Curr,
-    price2,
-    price2Curr,
-    price3,
-    price3Curr,
-    price4,
-    price4Curr,
-    price5,
-    price5Curr,
-    transportType,
-    isDiplomat,
-    hsCode,
-    goodsNm,
-    shipperCntryCd,
-    shipperCntryNm,
-    shipperNatinality,
-    shipperNm,
-    shipperReg,
-    shipperAddr,
-    shipperTel,
-    consigneeCntryCd,
-    consigneeCntryNm,
-    consigneeNatinality,
-    consigneeNm,
-    consigneeReg,
-    consigneeAddr,
-    consigneeTel,
-    compName,
-    compRegister,
-    compAddr,
-    compTel,
-    mailDate,
-    ecommerceType,
-    ecommerceLink,
-  } = req.body;
   console.log(req.body);
 
-  // Confirm data
-  if (!user) {
-    return res.status(400).json({ message: "All fields are required" });
+  let payload, duplicate;
+
+  if (Object.hasOwn(req.body, "data")) {
+    payload = req.body.data;
+    for (let i = 0; i < payload.length; i++) {
+      const mailId = payload[i].mailId;
+      const blNo = payload[i].blNo;
+      console.log(mailId,blNo)
+      duplicate = await Packagee.findOne({
+        $and: [{ mailId, blNo }],
+      })
+        .collation({ locale: "en", strength: 2 })
+        .lean()
+        .exec();
+    }
+  } else {
+    payload = req.body;
+    const {mailId, blNo} = req.body;
+    duplicate = await Packagee.findOne({
+      $and: [{ mailId, blNo }],
+    })
+      .collation({ locale: "en", strength: 2 })
+      .lean()
+      .exec();
   }
+
+  // Confirm data
+  /*   if (!user) {
+    console.log(user);
+    return res.status(400).json({ message: "All fields are required" });
+  } */
 
   // Check for duplicate title
-  const duplicate = await Packagee.findOne({
-    $and: [{ mailId, blNo }],
-  })
-    .collation({ locale: "en", strength: 2 })
-    .lean()
-    .exec();
 
   if (duplicate) {
+    console.log("duplicate");
     return res.status(409).json({ message: "№ болон илгээмжийн дугаар давхцсан байна!" });
   }
-
   // Create and store the new user
-  const packagee = await Packagee.create({
-    user,
-    prgsStatusCd,
-    houseSeq,
-    mailId,
-    mailBagNumber,
-    blNo,
-    reportType,
-    riskType,
-    netWgt,
-    wgt,
-    //wgtUnit,
-    qty,
-    qtyUnit,
-    dangGoodsCode,
-    transFare,
-    transFareCurr,
-    price1,
-    price1Curr,
-    price2,
-    price2Curr,
-    price3,
-    price3Curr,
-    price4,
-    price4Curr,
-    price5,
-    price5Curr,
-    transportType,
-    isDiplomat,
-    hsCode,
-    goodsNm,
-    shipperCntryCd,
-    shipperCntryNm,
-    shipperNatinality,
-    shipperNm,
-    shipperReg,
-    shipperAddr,
-    shipperTel,
-    consigneeCntryCd,
-    consigneeCntryNm,
-    consigneeNatinality,
-    consigneeNm,
-    consigneeReg,
-    consigneeAddr,
-    consigneeTel,
-    compName,
-    compRegister,
-    compAddr,
-    compTel,
-    mailDate,
-    ecommerceType,
-    ecommerceLink,
-  });
+  const packagee = Packagee.insertMany(payload);
 
   if (packagee) {
     // Created
+    console.log("created");
     return res.status(201).json({ message: "New packagee created" });
   } else {
     return res.status(400).json({ message: "Invalid packagee data received" });
@@ -328,10 +245,30 @@ const deletePackagee = async (req, res) => {
     }
     console.log(id[i]);
     const result = await packagee.deleteOne();
+    //packagee.delYn = "Y";
+    //}
+
+    //const result = await packagee.save();
     reply = `Package '${result.mailId}' with ID ${result._id} deleted`;
-  } 
+  }
 
   res.json(reply);
+};
+
+const sendPackagee = async (req, res) => {
+  //const { HOUSE_SEQ } = req.body;
+  //let jsonString = JSON.stringify(req.body.arr);
+  console.log(req.body.jsonString);
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: req.body.jsonString,
+  };
+  res = await fetch("https://api.gaali.mn/ceps/send/cargo/short", requestOptions)
+    //.then((res) => res.json())
+    .then((res) => console.log(res));
+
+  //res.json(reply);
 };
 
 module.exports = {
@@ -339,4 +276,5 @@ module.exports = {
   createNewPackagee,
   updatePackagee,
   deletePackagee,
+  sendPackagee,
 };
