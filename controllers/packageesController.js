@@ -1,5 +1,6 @@
 const Packagee = require("../models/Packagee");
 const User = require("../models/User");
+const Counter = require("../models/Counter");
 
 // @desc Get all packagees
 // @route GET /packagees
@@ -26,12 +27,23 @@ const getAllPackagees = async (req, res) => {
   res.json(packageesWithUser);
 };
 
+const getNextSequenceValue = (sequenceName, blNo) => {
+  const sequenceDocument = Counter.findOneAndUpdate(
+    { type: sequenceName, blNo: blNo },
+    { $inc: { sequence_value: 1 } },
+    {
+      new: true,
+    }
+  );
+  return sequenceDocument;
+};
+
+const zeroPad = (num, places) => String(num).padStart(places, "0");
+
 // @desc Create new packagee
 // @route POST /packagees
 // @access Private
 const createNewPackagee = async (req, res) => {
-  console.log(req.body);
-
   let payload, duplicate;
 
   if (Object.hasOwn(req.body, "data")) {
@@ -39,7 +51,7 @@ const createNewPackagee = async (req, res) => {
     for (let i = 0; i < payload.length; i++) {
       const mailId = payload[i].mailId;
       const blNo = payload[i].blNo;
-      console.log(mailId,blNo)
+      console.log(mailId, blNo);
       duplicate = await Packagee.findOne({
         $and: [{ mailId, blNo }],
       })
@@ -49,7 +61,12 @@ const createNewPackagee = async (req, res) => {
     }
   } else {
     payload = req.body;
-    const {mailId, blNo} = req.body;
+    const { mailId, blNo } = req.body;
+    /*    const doc = await Counter.findOneAndUpdate({ type: "houseSeq", blNo: blNo }, { $inc: { sequence_value: 1 } }, {
+      new: true,
+    });
+    payload.houseSeq = zeroPad(doc.sequence_value, 3)
+    console.log(doc.sequence_value); */
     duplicate = await Packagee.findOne({
       $and: [{ mailId, blNo }],
     })
@@ -71,15 +88,21 @@ const createNewPackagee = async (req, res) => {
     return res.status(409).json({ message: "№ болон илгээмжийн дугаар давхцсан байна!" });
   }
   // Create and store the new user
-  const packagee = Packagee.insertMany(payload);
-
-  if (packagee) {
-    // Created
-    console.log("created");
-    return res.status(201).json({ message: "New packagee created" });
-  } else {
-    return res.status(400).json({ message: "Invalid packagee data received" });
-  }
+  let insertedId = "";
+  const packagee = Packagee.insertMany(payload)
+    .then((result) => {
+      console.log("Successfully saved default items to DB");
+      result.forEach((package, index) => {
+        console.log(`User ${index + 1} _id:`, package._id);
+        insertedId = package._id.toString();
+        console.log("1=>" + insertedId);
+      });
+      return res.status(201).json({ message: "New packagee created", createdId: insertedId });
+    })
+    .catch(function (err) {
+      console.log(err);
+      return res.status(400).json({ message: err });
+    });
 };
 
 // @desc Update a packagee
@@ -235,23 +258,15 @@ const deletePackagee = async (req, res) => {
     return res.status(400).json({ message: "Packagee ID required" });
   }
 
-  // Confirm packagee exists to delete
   let reply = "";
-  for (let i = 0; i < id.length; i++) {
-    const packagee = await Packagee.findById(id[i]).exec();
-
-    if (!packagee) {
-      return res.status(400).json({ message: "Packagee not found" });
-    }
-    console.log(id[i]);
-    const result = await packagee.deleteOne();
-    //packagee.delYn = "Y";
-    //}
-
-    //const result = await packagee.save();
-    reply = `Package '${result.mailId}' with ID ${result._id} deleted`;
-  }
-
+  const result = await Packagee.updateMany({ _id: { $in: id } }, { $set: { delYn: "Y" } })
+    .then((result) => {
+      console.log(result);
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
+  reply = `Packages with ID ${id} deleted`;
   res.json(reply);
 };
 

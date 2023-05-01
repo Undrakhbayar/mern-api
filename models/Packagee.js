@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const packageeSchema = new mongoose.Schema(
   {
@@ -224,11 +223,5 @@ const packageeSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
-packageeSchema.plugin(AutoIncrement, {
-  inc_field: "package",
-  id: "packageNums",
-  start_seq: 1,
-});
 
 module.exports = mongoose.model("Packagee", packageeSchema);

@@ -3,11 +3,11 @@ const Reference = require("../models/Reference");
 const getReferencesByType = async (req, res) => {
   //const { type } = req.body;
   const type = req.originalUrl.split("?")[1]; 
-  console.log(req.type);
+  console.log(type);
 /*   const references = await Reference.find({
     type,
   }); */
-  const references = await Reference.find();
+  const references = await Reference.find({}, '-_id type value description');
   if (!references?.length) {
     return res.status(400).json({ message: "No references found" });
   }
