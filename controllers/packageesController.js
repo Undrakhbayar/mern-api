@@ -45,7 +45,7 @@ const zeroPad = (num, places) => String(num).padStart(places, "0");
 // @access Private
 const createNewPackagee = async (req, res) => {
   let payload, duplicate;
-
+  console.log(req.body);
   if (Object.hasOwn(req.body, "data")) {
     payload = req.body.data;
     for (let i = 0; i < payload.length; i++) {
