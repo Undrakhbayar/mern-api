@@ -63,47 +63,11 @@ const packageeSchema = new mongoose.Schema(
       type: String,
       default: "USD",
     },
-    price1: {
-      type: Number,
-      required: false,
-    },
-    price1Curr: {
-      type: String,
-      default: "USD",
-    },
-    price2: {
-      type: Number,
-      required: false,
-    },
-    price2Curr: {
-      type: String,
-      required: false,
-    },
-    price3: {
-      type: Number,
-      required: false,
-    },
-    price3Curr: {
-      type: String,
-      required: false,
-    },
-    price4: {
-      type: Number,
-      required: false,
-    },
-    price4Curr: {
-      type: String,
-      required: false,
-    },
-    price5: {
-      type: Number,
-      required: false,
-    },
-    price5Curr: {
-      type: String,
-      required: false,
-    },
     transportType: {
+      type: String,
+      required: false,
+    },
+    transportTypeNm: {
       type: String,
       required: false,
     },
