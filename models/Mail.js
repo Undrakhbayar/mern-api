@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const packageeSchema = new mongoose.Schema(
+const mailSchema = new mongoose.Schema(
   {
     houseSeq: {
       type: String,
@@ -156,19 +156,51 @@ const packageeSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    regDate: {
-      type: Date,
-      required: false,
-    },
     mailDate: {
       type: String,
       required: false,
     },
-    ecommerceType: {
+    area: {
       type: String,
       required: false,
     },
-    ecommerceLink: {
+    office: {
+      type: String,
+      required: false,
+    },
+    consigneePayYn: {
+      type: String,
+      required: false,
+    },
+    mailType: {
+      type: String,
+      required: false,
+    },
+    serviceType: {
+      type: String,
+      required: false,
+    },
+    mainPrice: {
+      type: String,
+      required: false,
+    },
+    regPrice: {
+      type: String,
+      required: false,
+    },
+    addPrice: {
+      type: String,
+      required: false,
+    },
+    tax: {
+      type: String,
+      required: false,
+    },
+    addWgtPrice: {
+      type: String,
+      required: false,
+    },
+    sumPrice: {
       type: String,
       required: false,
     },
@@ -188,4 +220,4 @@ const packageeSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Packagee", packageeSchema);
+module.exports = mongoose.model("Mail", mailSchema);

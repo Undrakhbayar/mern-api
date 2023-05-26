@@ -1,38 +1,38 @@
-const Packagee = require("../models/Packagee");
+const Mail = require("../models/Mail");
 const User = require("../models/User");
 const Counter = require("../models/Counter");
 
-// @desc Get all packagees
-// @route GET /packagees
+// @desc Get all mails
+// @route GET /mails
 // @access Private
-const getAllPackagees = async (req, res) => {
-  // Get all packagees from MongoDB
-  const packagees = await Packagee.find({ delYn: "N" }).sort({ createdAt: -1 }).lean();
+const getAllMails = async (req, res) => {
+  // Get all mails from MongoDB
+  const mails = await Mail.find({ delYn: "N" }).sort({ createdAt: -1 }).lean();
 
-  // If no packagees
-  if (!packagees?.length) {
-    return res.status(400).json({ message: "No packagees found" });
+  // If no mails
+  if (!mails?.length) {
+    return res.status(400).json({ message: "No mails found" });
   }
 
-  // Add username to each packagee before sending the response
+  // Add username to each mail before sending the response
   // See Promise.all with map() here: https://youtu.be/4lqJBBEpjRE
   // You could also do this with a for...of loop
-  const packageesWithUser = await Promise.all(
-    packagees.map(async (packagee) => {
-      const user = await User.findById(packagee.user).lean().exec();
-      return { ...packagee, regusername: user.username };
+  const mailsWithUser = await Promise.all(
+    mails.map(async (mail) => {
+      const user = await User.findById(mail.user).lean().exec();
+      return { ...mail, regusername: user.username };
     })
   );
 
-  res.json(packageesWithUser);
+  res.json(mailsWithUser);
 };
 
 const zeroPad = (num, places) => String(num).padStart(places, "0");
 
-// @desc Create new packagee
-// @route POST /packagees
+// @desc Create new mail
+// @route POST /mails
 // @access Private
-const createNewPackagee = async (req, res) => {
+const createNewMail = async (req, res) => {
   let payload, duplicate;
 
   if (Object.hasOwn(req.body, "data")) {
@@ -41,7 +41,7 @@ const createNewPackagee = async (req, res) => {
       const mailId = payload[i].mailId;
       const blNo = payload[i].blNo;
       console.log(mailId, blNo);
-      duplicate = await Packagee.findOne({
+      duplicate = await Mail.findOne({
         $and: [{ mailId, blNo }],
       })
         .collation({ locale: "en", strength: 2 })
@@ -56,7 +56,7 @@ const createNewPackagee = async (req, res) => {
     });
     payload.houseSeq = zeroPad(doc.sequence_value, 3)
     console.log(doc.sequence_value); */
-    /*     duplicate = await Packagee.findOne({
+    /*     duplicate = await Mail.findOne({
       $and: [{ mailId, blNo }],
     })
       .collation({ locale: "en", strength: 2 })
@@ -78,7 +78,7 @@ const createNewPackagee = async (req, res) => {
   console.log(doc);
   payload.mailId = doc.value + doc.time + zeroPad(doc.sequence_value, 6);
 
-  /*   duplicate = await Packagee.findOne({
+  /*   duplicate = await Mail.findOne({
     $and: [{ mailId, blNo }],
   })
     .collation({ locale: "en", strength: 2 })
@@ -91,7 +91,7 @@ const createNewPackagee = async (req, res) => {
   }
   // Create and store the new user
   let insertedId = "";
-  const packagee = Packagee.insertMany(payload)
+  const mail = Mail.insertMany(payload)
     .then((result) => {
       console.log("Successfully saved default items to DB");
       result.forEach((package, index) => {
@@ -99,7 +99,7 @@ const createNewPackagee = async (req, res) => {
         insertedId = package._id.toString();
         console.log("1=>" + insertedId);
       });
-      return res.status(201).json({ message: "New packagee created", createdId: insertedId });
+      return res.status(201).json({ message: "New mail created", createdId: insertedId });
     })
     .catch(function (err) {
       console.log(err);
@@ -107,10 +107,10 @@ const createNewPackagee = async (req, res) => {
     });
 };
 
-// @desc Update a packagee
-// @route PATCH /packagees
+// @desc Update a mail
+// @route PATCH /mails
 // @access Private
-const updatePackagee = async (req, res) => {
+const updateMail = async (req, res) => {
   console.log(req.body);
   const {
     id,
@@ -155,79 +155,79 @@ const updatePackagee = async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   } */
 
-  // Confirm packagee exists to update
-  const packagee = await Packagee.findById(id).exec();
+  // Confirm mail exists to update
+  const mail = await Mail.findById(id).exec();
 
-  if (!packagee) {
-    return res.status(400).json({ message: "Packagee not found" });
+  if (!mail) {
+    return res.status(400).json({ message: "Mail not found" });
   }
 
   // Check for duplicate title
-  /*   const duplicate = await Packagee.findOne({
+  /*   const duplicate = await Mail.findOne({
     $and: [{ mailId, blNo }],
   })
     .collation({ locale: "en", strength: 2 })
     .lean()
     .exec();
 
-  // Allow renaming of the original packagee
+  // Allow renaming of the original mail
   if (duplicate && duplicate?._id.toString() !== id) {
-    return res.status(409).json({ message: "Duplicate packagee title" });
+    return res.status(409).json({ message: "Duplicate mail title" });
   } */
   //if (prgsStatusCd) {
-  packagee.prgsStatusCd = prgsStatusCd;
-  (packagee.houseSeq = houseSeq),
-    (packagee.mailId = mailId),
-    (packagee.mailBagNumber = mailBagNumber),
-    (packagee.blNo = blNo),
-    (packagee.reportType = reportType),
-    (packagee.riskType = riskType),
-    (packagee.netWgt = netWgt),
-    (packagee.wgt = wgt),
+  mail.prgsStatusCd = prgsStatusCd;
+  (mail.houseSeq = houseSeq),
+    (mail.mailId = mailId),
+    (mail.mailBagNumber = mailBagNumber),
+    (mail.blNo = blNo),
+    (mail.reportType = reportType),
+    (mail.riskType = riskType),
+    (mail.netWgt = netWgt),
+    (mail.wgt = wgt),
     //wgtUnit,
-    (packagee.qty = qty),
-    (packagee.qtyUnit = qtyUnit),
-    (packagee.dangGoodsCode = dangGoodsCode),
-    (packagee.transFare = transFare),
-    (packagee.transFareCurr = transFareCurr),
-    (packagee.transportType = transportType),
-    (packagee.isDiplomat = isDiplomat),
-    (packagee.goodsNm = goodsNm),
-    (packagee.shipperCntryCd = shipperCntryCd),
-    (packagee.shipperCntryNm = shipperCntryNm),
-    (packagee.shipperNatinality = shipperNatinality),
-    (packagee.shipperNm = shipperNm),
-    (packagee.shipperReg = shipperReg),
-    (packagee.shipperAddr = shipperAddr),
-    (packagee.shipperTel = shipperTel),
-    (packagee.consigneeCntryCd = consigneeCntryCd),
-    (packagee.consigneeCntryNm = consigneeCntryNm),
-    (packagee.consigneeNatinality = consigneeNatinality),
-    (packagee.consigneeNm = consigneeNm),
-    (packagee.consigneeReg = consigneeReg),
-    (packagee.consigneeAddr = consigneeAddr),
-    (packagee.consigneeTel = consigneeTel),
-    (packagee.mailDate = mailDate);
+    (mail.qty = qty),
+    (mail.qtyUnit = qtyUnit),
+    (mail.dangGoodsCode = dangGoodsCode),
+    (mail.transFare = transFare),
+    (mail.transFareCurr = transFareCurr),
+    (mail.transportType = transportType),
+    (mail.isDiplomat = isDiplomat),
+    (mail.goodsNm = goodsNm),
+    (mail.shipperCntryCd = shipperCntryCd),
+    (mail.shipperCntryNm = shipperCntryNm),
+    (mail.shipperNatinality = shipperNatinality),
+    (mail.shipperNm = shipperNm),
+    (mail.shipperReg = shipperReg),
+    (mail.shipperAddr = shipperAddr),
+    (mail.shipperTel = shipperTel),
+    (mail.consigneeCntryCd = consigneeCntryCd),
+    (mail.consigneeCntryNm = consigneeCntryNm),
+    (mail.consigneeNatinality = consigneeNatinality),
+    (mail.consigneeNm = consigneeNm),
+    (mail.consigneeReg = consigneeReg),
+    (mail.consigneeAddr = consigneeAddr),
+    (mail.consigneeTel = consigneeTel),
+    (mail.mailDate = mailDate);
   //}
 
-  const updatedPackagee = await packagee.save();
+  const updatedMail = await mail.save();
 
-  res.json(`'${updatedPackagee.houseSeq}' updated`);
+  res.json(`'${updatedMail.houseSeq}' updated`);
 };
 
-// @desc Delete a packagee
-// @route DELETE /packagees
+// @desc Delete a mail
+// @route DELETE /mails
 // @access Private
-const deletePackagee = async (req, res) => {
+const deleteMail = async (req, res) => {
   const { id } = req.body;
   console.log(req.body);
   // Confirm data
   if (!id) {
-    return res.status(400).json({ message: "Packagee ID required" });
+    return res.status(400).json({ message: "Mail ID required" });
   }
 
   let reply = "";
-  const result = await Packagee.updateMany({ _id: { $in: id } }, { $set: { delYn: "Y" } })
+  const result = await Mail.updateMany({ _id: { $in: id } }, { $set: { delYn: "Y" } })
     .then((result) => {
       console.log(result);
     })
@@ -238,7 +238,7 @@ const deletePackagee = async (req, res) => {
   res.json(reply);
 };
 
-const sendPackagee = async (req, res) => {
+const sendMail = async (req, res) => {
   //const { HOUSE_SEQ } = req.body;
   //let jsonString = JSON.stringify(req.body.arr);
   console.log(req.body.jsonString);
@@ -255,9 +255,9 @@ const sendPackagee = async (req, res) => {
 };
 
 module.exports = {
-  getAllPackagees,
-  createNewPackagee,
-  updatePackagee,
-  deletePackagee,
-  sendPackagee,
+  getAllMails,
+  createNewMail,
+  updateMail,
+  deleteMail,
+  sendMail,
 };
