@@ -1,6 +1,6 @@
 const Item = require("../models/Item");
 const User = require("../models/User");
-const Packagee = require("../models/Packagee");
+const Mail = require("../models/Mail");
 const Counter = require("../models/Counter");
 
 // @desc Get all items
@@ -10,7 +10,7 @@ const getAllItems = async (req, res) => {
   // Get all items from MongoDB
   const packageId = req.query.id;
   console.log("packageid",packageId);
-  const items = await Item.find({ delYn: "N", packageeId: packageId }).sort({ createdAt: -1 }).lean()
+  const items = await Item.find({ delYn: "N", mailId: packageId }).sort({ createdAt: -1 }).lean()
   // If no items
   if (!items?.length) {
     return res.status(400).json({ message: "No items found" });
@@ -20,8 +20,8 @@ const getAllItems = async (req, res) => {
   // You could also do this with a for...of loop
 /*   const itemsWithPackageId = await Promise.all(
     items.map(async (item) => {
-      console.log(item.packageeId);
-      const package = await Packagee.findById(item.packageeId).lean().exec();
+      console.log(item.mailId);
+      const package = await Mail.findById(item.mailId).lean().exec();
       return { ...item };
     })
   ); */
