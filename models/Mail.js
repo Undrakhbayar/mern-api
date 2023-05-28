@@ -112,6 +112,10 @@ const mailSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    shipperEmail: {
+      type: String,
+      required: false,
+    },
     consigneeCntryCd: {
       type: String,
       required: false,
@@ -140,6 +144,10 @@ const mailSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    consigneeEmail: {
+      type: String,
+      required: false,
+    },
     compName: {
       type: String,
       required: false,
@@ -164,7 +172,7 @@ const mailSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    office: {
+    branch: {
       type: String,
       required: false,
     },
@@ -181,27 +189,27 @@ const mailSchema = new mongoose.Schema(
       required: false,
     },
     mainPrice: {
-      type: String,
+      type: Number,
       required: false,
     },
     regPrice: {
-      type: String,
+      type: Number,
       required: false,
     },
     addPrice: {
-      type: String,
+      type: Number,
       required: false,
     },
     tax: {
-      type: String,
+      type: Number,
       required: false,
     },
     addWgtPrice: {
-      type: String,
+      type: Number,
       required: false,
     },
     sumPrice: {
-      type: String,
+      type: Number,
       required: false,
     },
     user: {

@@ -21,7 +21,7 @@ const getAllUsers = async (req, res) => {
 // @route POST /users
 // @access Private
 const createNewUser = async (req, res) => {
-    const { username, password, roles } = req.body
+    const { username, password, roles, compName, compTel, compRegister, compAddr } = req.body
 
     // Confirm data
     if (!username || !password) {
@@ -40,7 +40,7 @@ const createNewUser = async (req, res) => {
 
     const userObject = (!Array.isArray(roles) || !roles.length)
         ? { username, "password": hashedPwd }
-        : { username, "password": hashedPwd, roles }
+        : { username, "password": hashedPwd, roles, compName, compTel, compRegister, compAddr }
 
     // Create and store new user 
     const user = await User.create(userObject)

@@ -1,36 +1,21 @@
 const mongoose = require("mongoose");
 
-const bundleSchema = new mongoose.Schema(
+const OuterSchema = new mongoose.Schema(
   {
-    bundleNo: {
+    outerBranch: {
       type: String,
       required: true,
     },
-    bundleBranch: {
+    outerNo: {
       type: String,
       required: true,
     },
-    bundleWgt: {
-      type: Number,
-      required: true,
-    },
-    bundleDate: {
+    outerDate: {
       type: String, // Please note, you might want to use a Date type here, depending on your use case.
       required: true,
     },
-    bundleType: {
+    blNo: {
       type: String,
-      required: true,
-    },
-    innerNo: {
-      type: String, // This field is not required by default
-    },
-    sumWgt: {
-      type: Number,
-      required: true,
-    },
-    sumCnt: {
-      type: Number,
       required: true,
     },
     user: {
@@ -44,6 +29,6 @@ const bundleSchema = new mongoose.Schema(
   }
 );
 
-const Bundle = mongoose.model("Bundle", bundleSchema);
+const Outer = mongoose.model("Outer", OuterSchema);
 
-module.exports = Bundle;
+module.exports = Outer;

@@ -34,6 +34,8 @@ app.use('/mails', require('./routes/mailRoutes'))
 app.use('/references', require('./routes/referenceRoutes'))
 app.use('/items', require('./routes/itemRoutes'))
 app.use('/bundles', require('./routes/bundleRoutes'))
+app.use('/outers', require('./routes/outerRoutes'))
+app.use('/branches', require('./routes/branchRoutes'))
 
 app.all('*', (req, res) => {
     res.status(404)

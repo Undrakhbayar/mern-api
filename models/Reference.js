@@ -12,6 +12,10 @@ const referenceSchema = new mongoose.Schema({
     description: {
         type: String,
         required: false
+    },
+    order : {
+        type: Number,
+        required: false
     }
 })
 
