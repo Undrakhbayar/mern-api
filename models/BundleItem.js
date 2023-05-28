@@ -7,6 +7,16 @@ const BundleItemSchema = new mongoose.Schema(
       required: true,
     },
     mailId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Mail",
+    },
+    bundleId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Bundle",
+    },
+    mailNo: {
       type: String,
       required: true,
     },

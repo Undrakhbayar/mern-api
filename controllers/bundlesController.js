@@ -1,4 +1,5 @@
 const Bundle = require("../models/Bundle");
+const BundleItem = require("../models/BundleItem");
 const User = require("../models/User");
 const Counter = require("../models/Counter");
 
@@ -7,7 +8,7 @@ const Counter = require("../models/Counter");
 // @access Private
 const getAllBundles = async (req, res) => {
   // Get all bundles from MongoDB
-  const bundles = await Bundle.find({ delYn: "N" }).sort({ createdAt: -1 }).lean();
+  const bundles = await Bundle.find().sort({ createdAt: -1 }).lean();
 
   // If no bundles
   if (!bundles?.length) {
@@ -34,39 +35,12 @@ const zeroPad = (num, places) => String(num).padStart(places, "0");
 // @access Private
 const createNewBundle = async (req, res) => {
   let payload, duplicate;
+  console.log(req.body);
+  const { bundleNo, bundleBranch, bundleWgt, bundleType, bundleDate, innerNo, sumCnt, sumWgt, user } = req.body;
+  const bundleItems = req.body.items;
 
-  if (Object.hasOwn(req.body, "data")) {
-    payload = req.body.data;
-    for (let i = 0; i < payload.length; i++) {
-      const mailId = payload[i].mailId;
-      const blNo = payload[i].blNo;
-      console.log(mailId, blNo);
-      duplicate = await Bundle.findOne({
-        $and: [{ mailId, blNo }],
-      })
-        .collation({ locale: "en", strength: 2 })
-        .lean()
-        .exec();
-    }
-  } else {
-    payload = req.body;
-    const { mailId, blNo } = req.body;
-    /*    const doc = await Counter.findOneAndUpdate({ type: "houseSeq", blNo: blNo }, { $inc: { sequence_value: 1 } }, {
-      new: true,
-    });
-    payload.houseSeq = zeroPad(doc.sequence_value, 3)
-    console.log(doc.sequence_value); */
-    /*     duplicate = await Bundle.findOne({
-      $and: [{ mailId, blNo }],
-    })
-      .collation({ locale: "en", strength: 2 })
-      .lean()
-      .exec(); */
-  }
-  // Check for duplicate title
-
-  const year = new Date().getFullYear().toString().slice(-2);
-  const doc = await Counter.findOneAndUpdate(
+  /*  const year = new Date().getFullYear().toString().slice(-2);
+   const doc = await Counter.findOneAndUpdate(
     { type: "compReg", value: payload.compRegister, time: year },
     { $inc: { sequence_value: 1 } },
     {
@@ -74,37 +48,44 @@ const createNewBundle = async (req, res) => {
       upsert: true,
       setDefaultsOnInsert: true,
     }
-  );
-  console.log(doc);
-  payload.mailId = doc.value + doc.time + zeroPad(doc.sequence_value, 6);
+  ); */
+  //console.log(doc);
+  //payload.mailId = doc.value + doc.time + zeroPad(doc.sequence_value, 6);
 
-  /*   duplicate = await Bundle.findOne({
-    $and: [{ mailId, blNo }],
-  })
-    .collation({ locale: "en", strength: 2 })
-    .lean()
-    .exec(); */
-  console.log(payload);
-  if (duplicate) {
-    console.log("duplicate");
-    return res.status(409).json({ message: "№ болон илгээмжийн дугаар давхцсан байна!" });
-  }
   // Create and store the new user
-  let insertedId = "";
-  const bundle = Bundle.insertMany(payload)
+  const bundle = Bundle.insertMany({ bundleNo, bundleBranch, bundleWgt, bundleType, bundleDate, innerNo, sumCnt, sumWgt, user })
     .then((result) => {
       console.log("Successfully saved default items to DB");
-      result.forEach((package, index) => {
-        console.log(`User ${index + 1} _id:`, package._id);
-        insertedId = package._id.toString();
-        console.log("1=>" + insertedId);
+      result.forEach((bundle, index) => {
+        insertedId = bundle._id.toString();
       });
-      return res.status(201).json({ message: "New bundle created", createdId: insertedId });
+/*       bundleItems.map((x) => ({
+        ...x,
+        bundleId: insertedId,
+      })); */
+      bundleItems.forEach(e => e.bundleId = insertedId);
+      console.log(bundleItems);
+      const bundleItem = BundleItem.insertMany(bundleItems);
+      if (bundleItem) {
+        return res.status(201).json({ message: "New bundle and item created" });
+      } else {
+        return res.status(400).json({ message: "Invalid bundle item data received" });
+      }
     })
     .catch(function (err) {
       console.log(err);
       return res.status(400).json({ message: err });
     });
+  /*   if (bundle) {
+    const bundleItem = BundleItem.insertMany(req.body.items);
+    if (bundleItem) {
+      return res.status(201).json({ message: "New bundle and item created" });
+    } else {
+      return res.status(400).json({ message: "Invalid bundle item data received" });
+    }
+  } else {
+    return res.status(400).json({ message: "Invalid bundle data received" });
+  } */
 };
 
 // @desc Update a bundle
@@ -227,13 +208,15 @@ const deleteBundle = async (req, res) => {
   }
 
   let reply = "";
-  const result = await Bundle.updateMany({ _id: { $in: id } }, { $set: { delYn: "Y" } })
+  const result = await Bundle.deleteMany({ _id: { $in: id } })
     .then((result) => {
       console.log(result);
     })
     .catch(function (err) {
       console.log(err);
     });
+  const resultItem = await BundleItem.deleteMany({ bundleId: { $in: id } });
+  console.log(resultItem);
   reply = `Packages with ID ${id} deleted`;
   res.json(reply);
 };

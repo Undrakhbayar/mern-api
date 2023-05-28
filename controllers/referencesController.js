@@ -18,7 +18,7 @@ const getReferencesByType = async (req, res) => {
     {
       $project: {
         type: "branch",
-        value: "$branchName", // Rename 'branchName' to 'value'
+        value: "$branchCode", // Rename 'branchName' to 'value'
         description: "$branchName",
         _id: 0, // Exclude the _id field from the result
       },
@@ -27,7 +27,7 @@ const getReferencesByType = async (req, res) => {
   for (let i = 0; i < branches.length; i++) {
     references.push(branches[i]);
   }
-  
+
   if (!references?.length) {
     return res.status(400).json({ message: "No references found" });
   }

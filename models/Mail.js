@@ -35,7 +35,7 @@ const mailSchema = new mongoose.Schema(
       type: Number,
       required: false,
     },
-    wgt: {
+    mailWgt: {
       type: Number,
       required: false,
     },
@@ -96,6 +96,10 @@ const mailSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    shipperNatinalityNm: {
+      type: String,
+      required: false,
+    },
     shipperNm: {
       type: String,
       required: false,
@@ -125,6 +129,10 @@ const mailSchema = new mongoose.Schema(
       required: false,
     },
     consigneeNatinality: {
+      type: String,
+      required: false,
+    },
+    consigneeNatinalityNm: {
       type: String,
       required: false,
     },
@@ -172,7 +180,15 @@ const mailSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    areaNm: {
+      type: String,
+      required: false,
+    },
     branch: {
+      type: String,
+      required: false,
+    },
+    branchNm: {
       type: String,
       required: false,
     },
@@ -184,7 +200,15 @@ const mailSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    mailTypeNm: {
+      type: String,
+      required: false,
+    },
     serviceType: {
+      type: String,
+      required: false,
+    },
+    serviceTypeNm: {
       type: String,
       required: false,
     },
