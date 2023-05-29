@@ -8,6 +8,7 @@ const BranchSchema = new Schema(
     branchName: { type: String, required: true },
     branchCurr: { type: String, required: true },
     branchCountry: { type: String, required: true },
+    branchCountryNm: { type: String, required: true },
     branchAddr: { type: String, required: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },

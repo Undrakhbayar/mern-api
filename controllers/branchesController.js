@@ -3,7 +3,7 @@ const User = require("../models/User");
 
 const getAllBranches = async (req, res) => {
   console.log(req.query.compreg);
-  const branches = await Branch.find({compRegister: req.query.compreg});
+  const branches = await Branch.find({ compRegister: req.query.compreg });
   if (!branches?.length) {
     return res.status(400).json({ message: "No branches found" });
   }
@@ -11,8 +11,9 @@ const getAllBranches = async (req, res) => {
   res.json(branches);
 };
 const createNewBranch = async (req, res) => {
-  const { compRegister, branchCode, branchName, branchCurr, branchCountry, branchAddr, user } = req.body;
+  const { compRegister, branchCode, branchName, branchCurr, branchCountry, branchCountryNm, branchAddr, user } = req.body;
 
+  console.log(req.body);
   const duplicate = await Branch.findOne({ $and: [{ compRegister, branchCode }] })
     .collation({ locale: "en", strength: 2 })
     .lean()
@@ -22,7 +23,7 @@ const createNewBranch = async (req, res) => {
     return res.status(409).json({ message: "ААН-ийн регистр болон салбарын код давхцаж байна." });
   }
 
-  const branch = await Branch.create({ compRegister, branchCode, branchName, branchCurr, branchCountry, branchAddr, user });
+  const branch = await Branch.create({ compRegister, branchCode, branchName, branchCurr, branchCountry, branchCountryNm, branchAddr, user });
 
   if (branch) {
     res.status(201).json({ message: `${branchName} салбар амжилттай хадгаллаа.` });

@@ -5,11 +5,11 @@ const referenceSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    value: {
+    code: {
         type: String,
         required: true
     },
-    description: {
+    name: {
         type: String,
         required: false
     },

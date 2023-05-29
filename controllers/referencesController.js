@@ -8,7 +8,7 @@ const getReferencesByType = async (req, res) => {
   /*   const references = await Reference.find({
     type,
   }); */
-  const references = await Reference.find({}, "-_id type value description").sort("type order");
+  const references = await Reference.find({}, "-_id type code name").sort("type order");
   const branches = await Branch.aggregate([
     {
       $match: {
@@ -18,8 +18,8 @@ const getReferencesByType = async (req, res) => {
     {
       $project: {
         type: "branch",
-        value: "$branchCode", // Rename 'branchName' to 'value'
-        description: "$branchName",
+        code: "$branchCode", // Rename 'branchName' to 'value'
+        name: "$branchName",
         _id: 0, // Exclude the _id field from the result
       },
     },
@@ -31,19 +31,18 @@ const getReferencesByType = async (req, res) => {
   if (!references?.length) {
     return res.status(400).json({ message: "No references found" });
   }
-
   res.json(references);
 };
 const createNewReference = async (req, res) => {
-  const { type, value, description } = req.body;
+  const { type, code, name } = req.body;
 
   // Confirm data
-  if (!type || !value) {
+  if (!type || !code) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   // Check for duplicate username
-  const duplicate = await Reference.findOne({ $and: [{ type, value }] })
+  const duplicate = await Reference.findOne({ $and: [{ type, code }] })
     .collation({ locale: "en", strength: 2 })
     .lean()
     .exec();
@@ -53,11 +52,11 @@ const createNewReference = async (req, res) => {
   }
 
   // Create and store new user
-  const user = await Reference.create({ type, value, description });
+  const user = await Reference.create({ type, code, name });
 
   if (user) {
     //created
-    res.status(201).json({ message: `New ${type} with value ${value} created` });
+    res.status(201).json({ message: `New ${type} with value ${code} created` });
   } else {
     res.status(400).json({ message: "Invalid type and value data received" });
   }
