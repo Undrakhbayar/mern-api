@@ -116,38 +116,50 @@ const updateMail = async (req, res) => {
     id,
     user,
     prgsStatusCd,
-    houseSeq,
     mailId,
-    mailBagNumber,
-    blNo,
     reportType,
     riskType,
-    netWgt,
-    wgt,
-    //wgtUnit,
-    qty,
-    qtyUnit,
-    dangGoodsCode,
     transFare,
     transFareCurr,
     transportType,
+    transportTypeNm,
     isDiplomat,
     goodsNm,
     shipperCntryCd,
     shipperCntryNm,
     shipperNatinality,
+    shipperNatinalityNm,
     shipperNm,
     shipperReg,
     shipperAddr,
     shipperTel,
+    shipperEmail,
     consigneeCntryCd,
     consigneeCntryNm,
     consigneeNatinality,
+    consigneeNatinalityNm,
     consigneeNm,
     consigneeReg,
     consigneeAddr,
     consigneeTel,
+    consigneeEmail,
     mailDate,
+    area,
+    areaNm,
+    branch,
+    branchNm,
+    consigneePayYn,
+    mailType,
+    mailTypeNm,
+    serviceType,
+    serviceTypeNm,
+    mailWgt,
+    mainPrice,
+    regPrice,
+    addPrice,
+    tax,
+    addWgtPrice,
+    sumPrice,
   } = req.body;
 
   // Confirm data
@@ -176,43 +188,55 @@ const updateMail = async (req, res) => {
   } */
   //if (prgsStatusCd) {
   mail.prgsStatusCd = prgsStatusCd;
-  (mail.houseSeq = houseSeq),
-    (mail.mailId = mailId),
-    (mail.mailBagNumber = mailBagNumber),
-    (mail.blNo = blNo),
+  (mail.mailId = mailId),
     (mail.reportType = reportType),
     (mail.riskType = riskType),
-    (mail.netWgt = netWgt),
-    (mail.wgt = wgt),
-    //wgtUnit,
-    (mail.qty = qty),
-    (mail.qtyUnit = qtyUnit),
-    (mail.dangGoodsCode = dangGoodsCode),
     (mail.transFare = transFare),
     (mail.transFareCurr = transFareCurr),
     (mail.transportType = transportType),
+    (mail.transportTypeNm = transportTypeNm),
     (mail.isDiplomat = isDiplomat),
     (mail.goodsNm = goodsNm),
     (mail.shipperCntryCd = shipperCntryCd),
     (mail.shipperCntryNm = shipperCntryNm),
     (mail.shipperNatinality = shipperNatinality),
+    (mail.shipperNatinalityNm = shipperNatinalityNm),
     (mail.shipperNm = shipperNm),
     (mail.shipperReg = shipperReg),
     (mail.shipperAddr = shipperAddr),
     (mail.shipperTel = shipperTel),
+    (mail.shipperEmail = shipperEmail),
     (mail.consigneeCntryCd = consigneeCntryCd),
     (mail.consigneeCntryNm = consigneeCntryNm),
     (mail.consigneeNatinality = consigneeNatinality),
+    (mail.consigneeNatinalityNm = consigneeNatinalityNm),
     (mail.consigneeNm = consigneeNm),
     (mail.consigneeReg = consigneeReg),
     (mail.consigneeAddr = consigneeAddr),
     (mail.consigneeTel = consigneeTel),
+    (mail.consigneeEmail = consigneeEmail),
     (mail.mailDate = mailDate);
+    (mail.area = area);
+    (mail.areaNm = areaNm);
+    (mail.branch = branch);
+    (mail.branchNm = branchNm);
+    (mail.consigneePayYn = consigneePayYn);
+    (mail.mailType = mailType);
+    (mail.mailTypeNm = mailTypeNm);
+    (mail.serviceType = serviceType);
+    (mail.serviceTypeNm = serviceTypeNm);
+    (mail.mailWgt = mailWgt);
+    (mail.mainPrice = mainPrice);
+    (mail.regPrice = regPrice);
+    (mail.addPrice = addPrice);
+    (mail.tax = tax);
+    (mail.addWgtPrice = addWgtPrice);
+    (mail.sumPrice = sumPrice);
   //}
 
   const updatedMail = await mail.save();
 
-  res.json(`'${updatedMail.houseSeq}' updated`);
+  res.json(`'${updatedMail.mailId}' updated`);
 };
 
 // @desc Delete a mail
