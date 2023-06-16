@@ -2,19 +2,22 @@ const Branch = require("../models/Branch");
 const User = require("../models/User");
 
 const getAllBranches = async (req, res) => {
-  console.log(req.query.compreg);
-  const branches = await Branch.find({ compRegister: req.query.compreg });
-  if (!branches?.length) {
-    return res.status(400).json({ message: "No branches found" });
+  try {
+    const branches = await Branch.find({ compRegister: req.query.compreg, deleted: false });
+    if (!branches?.length) {
+      return res.status(400).json({ message: "Салбарын мэдээлэл олдсонгүй." });
+    }
+    res.json(branches);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-
-  res.json(branches);
 };
 const createNewBranch = async (req, res) => {
-  const { compRegister, branchCode, branchName, branchCurr, branchCountry, branchCountryNm, branchAddr, user } = req.body;
-
+  const branch = new Branch({
+    ...req.body,
+  });
   console.log(req.body);
-  const duplicate = await Branch.findOne({ $and: [{ compRegister, branchCode }] })
+  const duplicate = await Branch.findOne({ $and: [{ compRegister: branch.compRegister, branchCode: branch.branchCode, deleted: false }] })
     .collation({ locale: "en", strength: 2 })
     .lean()
     .exec();
@@ -23,64 +26,39 @@ const createNewBranch = async (req, res) => {
     return res.status(409).json({ message: "ААН-ийн регистр болон салбарын код давхцаж байна." });
   }
 
-  const branch = await Branch.create({ compRegister, branchCode, branchName, branchCurr, branchCountry, branchCountryNm, branchAddr, user });
-
-  if (branch) {
-    res.status(201).json({ message: `${branchName} салбар амжилттай хадгаллаа.` });
-  } else {
-    res.status(400).json({ message: "Алдаа гарлаа." });
+  try {
+    const newBranch = await branch.save();
+    res.status(201).json(newBranch);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };
 
 const updateBranch = async (req, res) => {
-  const { type, value, description } = req.body;
-
-  // Confirm data
-  if (!type || !value) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
-  // Check for duplicate username
-  const duplicate = await Branch.findOne({ $and: [{ type, value }] })
-    .collation({ locale: "en", strength: 2 })
-    .lean()
-    .exec();
-
-  if (duplicate) {
-    return res.status(409).json({ message: "Duplicate type and value" });
-  }
-
-  // Create and store new user
-  const user = await Branch.create({ type, value, description });
-
-  if (user) {
-    //created
-    res.status(201).json({ message: `New ${type} with value ${value} created` });
-  } else {
-    res.status(400).json({ message: "Invalid type and value data received" });
+  console.log(req.body);
+  try {
+    const updatedBranch = await Branch.findByIdAndUpdate(req.body.id, req.body, { new: true });
+    res.json(updatedBranch);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };
 
 const deleteBranch = async (req, res) => {
-  const { id } = req.body;
+  console.log(req.body);
+  try {
+    const branch = await Branch.findById(req.body.id);
+    if (branch == null) {
+      return res.status(404).json({ message: "Салбар олдсонгүй." });
+    }
 
-  // Confirm data
-  if (!id) {
-    return res.status(400).json({ message: "Branch ID Required" });
+    branch.deleted = true;
+
+    await branch.save();
+    res.json({ message: "Салбарыг амжилттай устгалаа." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-
-  // Does the user exist to delete?
-  const user = await Branch.findById(id).exec();
-
-  if (!user) {
-    return res.status(400).json({ message: "Branch not found" });
-  }
-
-  const result = await user.deleteOne();
-
-  const reply = `Branch ${result.value} with ID ${result._id} deleted`;
-
-  res.json(reply);
 };
 
 module.exports = {
