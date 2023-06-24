@@ -14,6 +14,7 @@ const mailSchema = new mongoose.Schema(
     mailId: {
       type: String,
       required: false,
+      unique: true
     },
     mailBagNumber: {
       type: String,

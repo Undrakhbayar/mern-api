@@ -5,40 +5,47 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
     },
     password: {
       type: String,
       required: true,
     },
-    name: {
+    firstName: {
       type: String,
-      required: true
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
     },
     compName: {
       type: String,
-      required: true
+      required: true,
     },
     compRegister: {
       type: String,
-      required: true
+      required: true,
     },
     compAddr: {
       type: String,
-      required: true
+      required: true,
     },
     compTel: {
       type: String,
-      required: true
+      required: true,
     },
     roles: {
       type: [String],
       default: ["Employee"],
     },
-    active: {
-      type: Boolean,
-      default: true,
-    },
+    deleted: { type: Boolean, required: true, default: false },
+    created_user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
+    updated_user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
   },
   {
     timestamps: true,
